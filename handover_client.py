@@ -1,4 +1,3 @@
-# handover_client.py
 import socket
 import sys
 import time
@@ -57,11 +56,12 @@ def main():
             
             if not send_handover_command(sock, ue_id, target_enb_id):
                 print("Attempting to reconnect to the server...")
-                sock.close()  # Close the previous socket before creating a new one
                 sock = create_connection(HOST, PORT)
                 if not sock:
                     print("Reconnection failed. Exiting.")
                     break
+
+            # Here you can implement your "is alive" checks or other commands
 
             # Example delay between handover commands
             time.sleep(5)

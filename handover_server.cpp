@@ -139,28 +139,20 @@ void HandoverServer::handle_client(int client_socket) {
     // Convert buffer to a std::string for easier handling
     data = std::string(buffer, bytes_received);
 
-    // Trim the data to remove the newline character
-    data.erase(std::remove(data.begin(), data.end(), '\n'), data.end());
-
-    // Parse the data (this is an example, you'll need to replace it with your actual parsing logic)
-    std::istringstream iss(data);
-    std::string command, ue_id, target_enb_id;
-    if (!(iss >> command >> ue_id >> target_enb_id)) {
-        // Send an error response back to client
-        std::string response = "Error: Invalid command format.\n";
-        send(client_socket, response.c_str(), response.size(), 0);
-        close(client_socket);
-        return;
+    // Look for the newline character and trim the data up to that point
+    size_t newline_pos = data.find('\n');
+    if (newline_pos != std::string::npos) {
+        data.resize(newline_pos); // Removes the newline character and any data after it
     }
 
-    // Here you would handle the handover logic
-    // For this example, we'll just print the parsed information
-    std::cout << "Received handover command for UE: " << ue_id << " to target eNB: " << target_enb_id << std::endl;
+    // Assuming the command is always correct, we'll just log the command
+    std::cout << "Command received, Going to apply handover...: " << data << std::endl;
 
-    // Send a success response back to client
-    std::string response = "Handover successful.\n";
+    // Send a success response back to the client
+    std::string response = "Handover acknowledged.\n";
     send(client_socket, response.c_str(), response.size(), 0);
 
     // Close the socket for this client
     close(client_socket);
 }
+

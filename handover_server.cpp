@@ -45,7 +45,7 @@ HandoverServer::~HandoverServer() {
     stop();
 }
 
-int HandoverServer::start() {
+bool HandoverServer::start() {
     server_fd = socket(AF_INET, SOCK_STREAM, 0);
     if (server_fd == -1) {
         std::cerr << "Failed to create socket: " << strerror(errno) << std::endl;

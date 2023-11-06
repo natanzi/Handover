@@ -15,14 +15,15 @@ public:
     void stop();
 
 private:
+    static void server_loop();
+    static void handle_client(int client_socket); // Now declared static
+
     int server_fd{-1};
     int port;
     std::atomic<bool> is_running{false};
     std::thread server_thread;
     std::vector<std::thread> client_threads;
-
-    void server_loop();
-    void handle_client(int client_socket);
 };
 
 #endif // HANDOVER_SERVER_H
+

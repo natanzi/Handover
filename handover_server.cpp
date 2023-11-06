@@ -112,12 +112,23 @@ void HandoverServer::handle_client(int client_socket) {
         // Handle the received message
         std::cout << "Received message on socket " << client_socket << ": " << data << std::endl;
 
-        // Assume the message is a handover command and process it
-        std::cout << "Processing command: " << data << std::endl;
+        // Extract the message ID and the command
+        size_t colon_pos = data.find(':');
+        if (colon_pos != std::string::npos) {
+            std::string message_id = data.substr(0, colon_pos);
+            std::string command = data.substr(colon_pos + 1);
 
-        // Send a success response back to the client
-        std::string response = "Command processed.\n";
-        send(client_socket, response.c_str(), response.size(), 0);
+            // Assume the command is a handover command and process it
+            std::cout << "Processing command: " << command << std::endl;
+
+            // Send a success response back to the client, including the message ID
+            std::string response = message_id + ":Command processed.\n";
+            send(client_socket, response.c_str(), response.size(), 0);
+        } else {
+            // Invalid message format, send an error response back to the client
+            std::string response = "Error: Invalid message format.\n";
+            send(client_socket, response.c_str(), response.size(), 0);
+        }
     }
 
     // If we're here, the loop has ended, so we should clean up and close the socket

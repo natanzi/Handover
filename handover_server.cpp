@@ -90,8 +90,8 @@ void HandoverServer::handle_client(int client_socket) {
     const int buffer_size = 1024;
     char buffer[buffer_size] = {0};
     std::string data;
-    std::string keep_alive_msg = "KEEP_ALIVE\n";
-    std::string ack_msg = "ACK\n";
+
+    std::cout << "Client connected: socket " << client_socket << std::endl;
 
     while (is_running.load()) {
         // Clear the buffer
@@ -102,31 +102,25 @@ void HandoverServer::handle_client(int client_socket) {
 
         // Check for disconnection or errors
         if (bytes_received <= 0) {
-            std::cerr << "Client disconnected or error occurred.\n";
+            std::cerr << "Client disconnected or error occurred: socket " << client_socket << std::endl;
             break; // Exit the loop and close the socket
         }
 
         // Convert buffer to a std::string for easier handling
         data = std::string(buffer, bytes_received);
 
-        // Check if this is a keep-alive message
-        if (data == keep_alive_msg) {
-            // Send an acknowledgment back to the client
-            send(client_socket, ack_msg.c_str(), ack_msg.size(), 0);
-        } else {
-            // Handle other messages
-            std::cout << "Received message: " << data << std::endl;
+        // Handle the received message
+        std::cout << "Received message on socket " << client_socket << ": " << data << std::endl;
 
-            // Assume any other message is a handover command and process it
-            std::cout << "Command received, Going to apply handover...: " << data << std::endl;
+        // Assume the message is a handover command and process it
+        std::cout << "Processing command: " << data << std::endl;
 
-            // Send a success response back to the client
-            std::string response = "Handover acknowledged.\n";
-            send(client_socket, response.c_str(), response.size(), 0);
-        }
+        // Send a success response back to the client
+        std::string response = "Command processed.\n";
+        send(client_socket, response.c_str(), response.size(), 0);
     }
 
     // If we're here, the loop has ended, so we should clean up and close the socket
+    std::cout << "Closing client socket: " << client_socket << std::endl;
     close(client_socket);
 }
-

@@ -93,7 +93,8 @@ void HandoverServer::server_loop() {
             continue;
         }
 
-        client_threads.emplace_back(&HandoverServer::handle_client, this, client_socket);
+        client_threads.emplace_back(&HandoverServer::handle_client, client_socket);
+
     }
 }
 

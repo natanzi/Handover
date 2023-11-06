@@ -18,7 +18,7 @@
  * and at http://www.gnu.org/licenses/.
  *
  */
-
+#include "handover_server.h"
 #include <poll.h>
 #include <signal.h>
 #include <stdio.h>
@@ -681,7 +681,15 @@ int main(int argc, char* argv[])
     enb->stop();
     return SRSRAN_ERROR;
   }
-
+  
+  // Start the HandoverServer by Milad
+  HandoverServer handoverServer(12345); // Replace with your desired port
+  if (handoverServer.start() != SRSRAN_SUCCESS) {
+    std::cerr << "Failed to start the Handover Server on port 12345" << std::endl;
+    enb->stop();
+    return SRSRAN_ERROR;
+  }
+}
   // Set metrics
   metricshub.init(enb.get(), args.general.metrics_period_secs);
   metricshub.add_listener(&metrics_screen);
@@ -739,6 +747,8 @@ int main(int argc, char* argv[])
   input.join();
   metricshub.stop();
   enb->stop();
+  // Stop the HandoverServer by Milad
+  handoverServer.stop();
   cout << "---  exiting  ---" << endl;
 
   return SRSRAN_SUCCESS;

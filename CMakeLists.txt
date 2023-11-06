@@ -35,7 +35,7 @@ endif (RPATH)
 add_library(enb_cfg_parser STATIC parser.cc enb_cfg_parser.cc)
 target_link_libraries(enb_cfg_parser srsran_common srsgnb_rrc_config_utils ${LIBCONFIGPP_LIBRARIES})
 
-add_library(handover_server STATIC handover_server/handover_server.cpp) # Add this line
+add_library(handover_server STATIC handover_server/handover_server.cpp) # Add this line by Milad
 
 add_executable(srsenb main.cc enb.cc metrics_stdout.cc metrics_csv.cc metrics_json.cc metrics_e2.cc)
 

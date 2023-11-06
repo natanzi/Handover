@@ -125,8 +125,42 @@ void HandoverServer::server_loop() {
 }
 
 void HandoverServer::handle_client(int client_socket) {
-    // Handle communication with the connected client
-    // ... (implementation remains the same)
+    char buffer[1024] = {0};
+    std::string data;
 
+    // Read data from the socket
+    ssize_t bytes_received = recv(client_socket, buffer, sizeof(buffer), 0);
+    if (bytes_received <= 0) {
+        // Handle error or disconnection
+        close(client_socket);
+        return;
+    }
+
+    // Convert buffer to a std::string for easier handling
+    data = std::string(buffer, bytes_received);
+
+    // Trim the data to remove the newline character
+    data.erase(std::remove(data.begin(), data.end(), '\n'), data.end());
+
+    // Parse the data (this is an example, you'll need to replace it with your actual parsing logic)
+    std::istringstream iss(data);
+    std::string command, ue_id, target_enb_id;
+    if (!(iss >> command >> ue_id >> target_enb_id)) {
+        // Send an error response back to client
+        std::string response = "Error: Invalid command format.\n";
+        send(client_socket, response.c_str(), response.size(), 0);
+        close(client_socket);
+        return;
+    }
+
+    // Here you would handle the handover logic
+    // For this example, we'll just print the parsed information
+    std::cout << "Received handover command for UE: " << ue_id << " to target eNB: " << target_enb_id << std::endl;
+
+    // Send a success response back to client
+    std::string response = "Handover successful.\n";
+    send(client_socket, response.c_str(), response.size(), 0);
+
+    // Close the socket for this client
     close(client_socket);
 }

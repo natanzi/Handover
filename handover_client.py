@@ -1,6 +1,8 @@
 import socket
 import sys
 import time
+import json
+import uuid
 
 # Replace with the server's IP address and port
 HOST = '127.0.0.1'  # The server's IP address
@@ -22,25 +24,40 @@ def create_connection(host, port, retries=5, delay=2):
     print("Maximum retries reached. Failed to connect to the server.")
     return None
 
-def send_handover_command(sock, ue_id, target_enb_id):
+def send_handover_command(sock, ue_id, source_enb_id, target_enb_id):
     """Sends a handover command to the server with a unique message ID and handles network errors."""
     try:
         # Generate a unique message ID for this command
         message_id = str(uuid.uuid4())
-        # Construct the handover command with message ID
-        message = f"{message_id}:Handover command for UE: {ue_id} to target eNB: {target_enb_id}\n"
+        
+        # Construct the handover command as a JSON formatted string with message ID
+        command = {
+            "message_id": message_id,
+            "command": "handover",
+            "parameters": {
+                "ue_id": ue_id,
+                "source_eNodeB_id": source_enb_id,
+                "target_eNodeB_id": target_enb_id
+            }
+        }
+        message = json.dumps(command) + '\n'  # Add newline to indicate end of message
         sock.sendall(message.encode())
 
         # Wait for a response from the server
         response = sock.recv(1024).decode()
 
-        # Extract message ID from response
-        response_id, response_message = response.split(':', 1)
+        # Attempt to parse the response as JSON
+        try:
+            response_data = json.loads(response)
+            response_id = response_data.get("message_id")
+            response_message = response_data.get("response")
 
-        if response_id == message_id:
-            print(f"Server response for {message_id}: {response_message}")
-        else:
-            print(f"Received mismatched response ID {response_id} for message ID {message_id}")
+            if response_id == message_id:
+                print(f"Server response for {message_id}: {response_message}")
+            else:
+                print(f"Received mismatched response ID {response_id} for message ID {message_id}")
+        except json.JSONDecodeError:
+            print("Failed to parse JSON response from server.")
 
     except socket.error as err:
         print(f"Send/receive failed with error: {err}.")

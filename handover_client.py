@@ -75,16 +75,13 @@ def main():
         sys.exit(1)
 
     try:
-        message_id = 0
         while True:
-            # Increment message ID for each command sent
-            message_id += 1
-            
-            # Example UE ID and target eNB ID for handover
+            # Example UE ID and source/target eNB IDs for handover
             ue_id = '123'
-            target_enb_id = '456'
+            source_enb_id = '1'
+            target_enb_id = '2'
             
-            if not send_handover_command(sock, ue_id, target_enb_id, message_id):
+            if not send_handover_command(sock, ue_id, source_enb_id, target_enb_id):
                 print("Attempting to reconnect to the server...")
                 sock = create_connection(HOST, PORT)
                 if not sock:
@@ -104,4 +101,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

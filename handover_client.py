@@ -22,25 +22,29 @@ def create_connection(host, port, retries=5, delay=2):
     print("Maximum retries reached. Failed to connect to the server.")
     return None
 
-def send_handover_command(sock, ue_id, target_enb_id, message_id):
-    """Sends a handover command to the server with a message ID and handles network errors."""
+def send_handover_command(sock, ue_id, target_enb_id):
+    """Sends a handover command to the server with a unique message ID and handles network errors."""
     try:
-        # Construct the handover command with a message ID
+        # Generate a unique message ID for this command
+        message_id = str(uuid.uuid4())
+        # Construct the handover command with message ID
         message = f"{message_id}:Handover command for UE: {ue_id} to target eNB: {target_enb_id}\n"
         sock.sendall(message.encode())
 
         # Wait for a response from the server
         response = sock.recv(1024).decode()
-        print(f"Server response to message {message_id}:", response)
 
-        # Verify if the response contains the same message ID
-        response_id, _, response_msg = response.partition(':')
-        if response_id != str(message_id):
-            print(f"Received response for message ID {response_id} which does not match the sent message ID {message_id}")
-            return False
+        # Extract message ID from response
+        response_id, response_message = response.split(':', 1)
+
+        if response_id == message_id:
+            print(f"Server response for {message_id}: {response_message}")
+        else:
+            print(f"Received mismatched response ID {response_id} for message ID {message_id}")
 
     except socket.error as err:
         print(f"Send/receive failed with error: {err}.")
+        # Here you can decide whether to terminate or retry the command
         return False
     except ConnectionResetError:
         print("Connection was closed by the server.")

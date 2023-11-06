@@ -682,14 +682,15 @@ int main(int argc, char* argv[])
     return SRSRAN_ERROR;
   }
   
-  // Start the HandoverServer by Milad
-  HandoverServer handoverServer(12345); // Replace with your desired port
+// Start the HandoverServer by Milad
+  int handover_port = 54321; // Replace with your desired port
+  HandoverServer handoverServer(handover_port);
   if (handoverServer.start() != SRSRAN_SUCCESS) {
-    std::cerr << "Failed to start the Handover Server on port 12345" << std::endl;
-    enb->stop();
-    return SRSRAN_ERROR;
+    std::cerr << "Failed to start the Handover Server on port " << handover_port << std::endl;
+    return SRSRAN_ERROR; // If the server fails to start, exit the srsran application
   }
-}
+  std::cout << "Handover Server started on port " << handover_port << std::endl;
+  
   // Set metrics
   metricshub.init(enb.get(), args.general.metrics_period_secs);
   metricshub.add_listener(&metrics_screen);
@@ -747,9 +748,10 @@ int main(int argc, char* argv[])
   input.join();
   metricshub.stop();
   enb->stop();
-  // Stop the HandoverServer by Milad
-  handoverServer.stop();
-  cout << "---  exiting  ---" << endl;
+  
+  // Clean-up code
+  std::cout << "Stopping Handover Server..." << std::endl;
+  handoverServer.stop(); // Stop the HandoverServer by Milad
 
   return SRSRAN_SUCCESS;
 }

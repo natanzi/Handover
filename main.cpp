@@ -4,7 +4,7 @@
 #include <iostream>
 
 int main() {
-    int port = 12345; // Replace with the port number you want the server to listen on
+    int port = 54321; // Replace with the port number you want the server to listen on
     HandoverServer server(port);
 
     if (server.start() != SRSRAN_SUCCESS) {

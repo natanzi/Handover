@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <string>
 #include <thread>
+#include <nlohmann/json.hpp>
 
 // Constructor
 HandoverServer::HandoverServer(int port) : port(port), is_running(false), server_fd(-1) {}
@@ -85,7 +86,6 @@ void HandoverServer::server_loop() {
     }
 }
 
-// Handle client connections
 void HandoverServer::handle_client(int client_socket) {
     const int buffer_size = 1024;
     char buffer[buffer_size] = {0};
@@ -109,24 +109,37 @@ void HandoverServer::handle_client(int client_socket) {
         // Convert buffer to a std::string for easier handling
         data = std::string(buffer, bytes_received);
 
-        // Handle the received message
-        std::cout << "Received message on socket " << client_socket << ": " << data << std::endl;
+        // Attempt to parse the JSON data
+        try {
+            auto json_data = nlohmann::json::parse(data);
 
-        // Extract the message ID and the command
-        size_t colon_pos = data.find(':');
-        if (colon_pos != std::string::npos) {
-            std::string message_id = data.substr(0, colon_pos);
-            std::string command = data.substr(colon_pos + 1);
+            // Extract the message ID, command, and parameters from JSON
+            std::string message_id = json_data["message_id"];
+            std::string command = json_data["command"];
+            auto parameters = json_data["parameters"];
 
-            // Assume the command is a handover command and process it
-            std::cout << "Processing command: " << command << std::endl;
+            std::cout << "Processing command: " << command << " with parameters " << parameters << std::endl;
+
+            // Process the handover command
+            // TODO: Add your logic here to handle the handover command and its parameters
 
             // Send a success response back to the client, including the message ID
-            std::string response = message_id + ":Command processed.\n";
+            nlohmann::json response_json = {
+                {"message_id", message_id},
+                {"response", "Handover command processed."}
+            };
+            std::string response = response_json.dump() + "\n";
             send(client_socket, response.c_str(), response.size(), 0);
-        } else {
-            // Invalid message format, send an error response back to the client
-            std::string response = "Error: Invalid message format.\n";
+        }
+        catch (const nlohmann::json::exception& e) {
+            // Handle JSON parsing exceptions
+            std::cerr << "JSON parsing error: " << e.what() << std::endl;
+
+            // Send an error response back to the client
+            nlohmann::json error_json = {
+                {"error", "Invalid JSON message format."}
+            };
+            std::string response = error_json.dump() + "\n";
             send(client_socket, response.c_str(), response.size(), 0);
         }
     }

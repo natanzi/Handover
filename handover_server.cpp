@@ -116,7 +116,7 @@ void HandoverServer::server_loop() {
 
         try {
             std::lock_guard<std::mutex> lock(client_threads_mutex);
-            client_threads.emplace_back(&HandoverServer::handle_client, client_socket);
+            client_threads.emplace_back([this](int sock){ handle_client(sock); }, client_socket);
         } catch (const std::exception& e) {
             std::cerr << "Failed to create client thread: " << e.what() << std::endl;
             close(client_socket);

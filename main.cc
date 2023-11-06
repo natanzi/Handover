@@ -1,7 +1,7 @@
 /**
- * Copyright 2013-2023 Software Radio Systems Limited edited by MILLLLLLADDDDDD
+ * Copyright 2013-2023 Software Radio Systems Limited
  *
- * This file is part of srsRAN.
+ * This file is part of srsRAN. Milad edit this for enable handover
  *
  * srsRAN is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -18,11 +18,6 @@
  * and at http://www.gnu.org/licenses/.
  *
  */
-#include "srsran/common/handover_server.h" // Include the header for HandoverServer by Milad
-#include <vector> // Include the header for HandoverServer by Milad
-#include <thread> // Include the header for HandoverServer by Milad
-#include <mutex>  // Include the header for HandoverServer by Milad
-
 
 #include <poll.h>
 #include <signal.h>
@@ -619,14 +614,7 @@ static void signal_handler()
 {
   running = false;
 }
-// Thread function to handle each client
-void handle_client(int client_socket) {
-  // Here you would interact with the client
-  // Read handover commands, process them, and send responses
 
-  // Close the client socket at the end of the session
-  close(client_socket);
-}
 int main(int argc, char* argv[])
 {
   srsran_register_signal_handler(signal_handler);
@@ -688,20 +676,12 @@ int main(int argc, char* argv[])
   }
 
   // Create eNB
-  unique_ptr<srsenb::enb> enb{new srsenb::enb(get_default_sink())};
+  unique_ptr<srsenb::enb> enb{new srsenb::enb(srslog::get_default_sink())};
   if (enb->init(args) != SRSRAN_SUCCESS) {
     enb->stop();
     return SRSRAN_ERROR;
   }
-  // Initialize and start the HandoverServer
-  HandoverServer server(12345); // Choose an appropriate port for your setup
-  if (server.start() != SRSRAN_SUCCESS) {
-    cerr << "Failed to start HandoverServer.\n";
-    enb->stop();
-    return SRSRAN_ERROR;
-  }
 
-  
   // Set metrics
   metricshub.init(enb.get(), args.general.metrics_period_secs);
   metricshub.add_listener(&metrics_screen);
@@ -736,70 +716,30 @@ int main(int argc, char* argv[])
   }
   int cnt    = 0;
   int ts_cnt = 0;
-
-  // Thread function to handle each client by Milad
-  void handle_client(int client_socket) {
-    // Here you would interact with the client
-    // Read handover commands, process them, and send responses
-
-    // Close the client socket at the end of the session
-    close(client_socket);
-  }
-  
-// Main loop to accept clients by Milad
-std::mutex threads_mutex;
-std::vector<std::thread> threads;
-
-// Main server loop
-while (running) {
-  // Accept new connections and spawn a thread for each client
-  int client_socket = server.accept_connection(); // This method must be defined in HandoverServer
-  if (client_socket >= 0) {
-    std::lock_guard<std::mutex> lock(threads_mutex);
-    threads.emplace_back(&handle_client, client_socket);
-  }
-
-  // Print buffer state periodically
-  if (args.general.print_buffer_state) {
-    cnt++;
-    if (cnt >= 1000) {
-      cnt = 0;
-      enb->print_pool();
-    }
-  }
-
-  // Print timestamp periodically
-  if (stdout_ts_enable) {
-    ts_cnt++;
-    if (ts_cnt >= 100) {
-      ts_cnt = 0;
-      char buff[64];
-      std::time_t t = std::time(nullptr);
-      if (std::strftime(buff, sizeof(buff), "%FT%T", std::gmtime(&t))) {
-        std::cout << buff << std::endl;
+  while (running) {
+    if (args.general.print_buffer_state) {
+      cnt++;
+      if (cnt == 1000) {
+        cnt = 0;
+        enb->print_pool();
       }
     }
+    if (stdout_ts_enable) {
+      if (++ts_cnt == 100) {
+        ts_cnt = 0;
+        char        buff[64];
+        std::time_t t = std::time(nullptr);
+        if (std::strftime(buff, sizeof(buff), "%FT%T", std::gmtime(&t))) {
+          std::cout << buff << '\n';
+        }
+      }
+    }
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
   }
+  input.join();
+  metricshub.stop();
+  enb->stop();
+  cout << "---  exiting  ---" << endl;
 
-  // Sleep to limit the loop rate
-  std::this_thread::sleep_for(std::chrono::milliseconds(10));
+  return SRSRAN_SUCCESS;
 }
-
-// Join all threads before exiting
-for (std::thread &t : threads) {
-  if (t.joinable()) {
-    t.join();
-  }
-}
-
-// Stop the HandoverServer before exiting the program by Milad
-server.stop();
-
-// Cleanup and close operations
-input.join();
-metricshub.stop();
-enb->stop();
-
-std::cout << "---  Exiting  ---" << std::endl;
-
-return SRSRAN_SUCCESS;

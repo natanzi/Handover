@@ -9,6 +9,7 @@ Use the provided script to install the srsRAN OAIC version. After setting up the
 ### Prerequisites
 
 Make sure you have 'OAIC' installed on your system before proceeding.
+after running the script, add the ue and push traffic and after that, run client.
 
 ### Installation Steps
 

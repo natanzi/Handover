@@ -8,4 +8,7 @@ install srsran OAIC version by the script and after adding ue, you can connect t
 OAIC
 
 ### Installing
-Just run the script.
+git clone https://github.com/natanzi/socket-over-srsran
+cp -f -r srsran_with_socket.sh oaic
+chmod +x srsran_with_socket.sh
+./srsran_with_socket.sh

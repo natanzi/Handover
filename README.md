@@ -1,2 +1,0 @@
-# Handover
-enable srsran handover

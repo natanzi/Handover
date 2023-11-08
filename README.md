@@ -22,5 +22,3 @@ chmod +x srsran_with_socket.sh
 ./srsran_with_socket.sh
 
 
-Ensure you include all necessary steps that users should follow. The above is a general template and should be adjusted to fit the exact process and commands for your specific setup.
-

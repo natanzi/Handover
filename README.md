@@ -16,9 +16,8 @@ after running the script, add the ue and push traffic and after that, run client
 cd oaic
 ```bash
 git clone https://github.com/natanzi/socket-over-srsran
-cp -f socket-over-srsran/srsran_with_socket.sh ../
+cd socket-over-srsran
+cp srsran_with_socket.sh ../
 cd ..
 chmod +x srsran_with_socket.sh
 ./srsran_with_socket.sh
-
-

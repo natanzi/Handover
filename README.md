@@ -12,11 +12,11 @@ Make sure you have 'OAIC' installed on your system before proceeding.
 
 ### Installation Steps
 
-
+cd oaic
 ```bash
 git clone https://github.com/natanzi/socket-over-srsran
-cd oaic
-cp -f ../socket-over-srsran/srsran_with_socket.sh .
+cp -f socket-over-srsran/srsran_with_socket.sh ../
+cd ..
 chmod +x srsran_with_socket.sh
 ./srsran_with_socket.sh
 

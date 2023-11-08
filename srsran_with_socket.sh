@@ -35,8 +35,8 @@ wget -O handover_server.h https://raw.githubusercontent.com/natanzi/socket-over-
 cd ..
 
 # Download additional files from the new repository
-wget -O CMakeLists.txt https://raw.githubusercontent.com/natanzi/socket-over-srsran/main/srsenb/src/CMakeLists.txt
-wget -O main.cc https://raw.githubusercontent.com/natanzi/socket-over-srsran/main/srsenb/src/main.cc
+wget -O CMakeLists.txt https://raw.githubusercontent.com/natanzi/socket-over-srsran/main/CMakeLists.txt
+wget -O main.cc https://raw.githubusercontent.com/natanzi/socket-over-srsran/main/main.cc
 cd ../..
 
 # Create build directory and build srsRAN

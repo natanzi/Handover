@@ -12,7 +12,6 @@ Make sure you have 'OAIC' installed on your system before proceeding.
 
 ### Installation Steps
 
-1. Clone the repository:
 
 ```bash
 git clone https://github.com/natanzi/socket-over-srsran

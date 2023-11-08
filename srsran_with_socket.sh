@@ -20,17 +20,17 @@ make install
 ldconfig
 cd ..
 
-# Create the directory for the handover server and download files
+# Create the directory for the handover server and download files from the new repository
 mkdir -p srsRAN-e2/srsenb/src/handover_server
 cd srsRAN-e2/srsenb/src/handover_server
-wget -O CMakeLists.txt https://raw.githubusercontent.com/natanzi/srsran_test/main/srsRAN-e2/srsenb/src/handover_server/CMakeLists.txt
-wget -O handover_server.cpp https://raw.githubusercontent.com/natanzi/srsran_test/main/srsRAN-e2/srsenb/src/handover_server/handover_server.cpp
-wget -O handover_server.h https://raw.githubusercontent.com/natanzi/srsran_test/main/srsRAN-e2/srsenb/src/handover_server/handover_server.h
+wget -O CMakeLists.txt https://raw.githubusercontent.com/natanzi/socket-over-srsran/main/handover_server/CMakeLists.txt
+wget -O handover_server.cpp https://raw.githubusercontent.com/natanzi/socket-over-srsran/main/handover_server/handover_server.cpp
+wget -O handover_server.h https://raw.githubusercontent.com/natanzi/socket-over-srsran/main/handover_server/handover_server.h
 cd ..
 
-# Download additional files
-wget -O CMakeLists.txt https://raw.githubusercontent.com/natanzi/srsran_test/main/srsRAN-e2/srsenb/src/CMakeLists.txt
-wget -O main.cc https://raw.githubusercontent.com/natanzi/srsran_test/main/srsRAN-e2/srsenb/src/main.cc
+# Download additional files from the new repository
+wget -O CMakeLists.txt https://raw.githubusercontent.com/natanzi/socket-over-srsran/main/srsenb/src/CMakeLists.txt
+wget -O main.cc https://raw.githubusercontent.com/natanzi/socket-over-srsran/main/srsenb/src/main.cc
 cd ../..
 
 # Create build directory and build srsRAN

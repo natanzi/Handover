@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# Check if the script is running in the 'oaic' folder
+if [[ $(basename "$PWD") != "oaic" ]]; then
+    echo "This script must be run from within the 'oaic' directory."
+    exit 1
+fi
+
 # Update and install dependencies
 apt-get update
 apt-get install -y build-essential cmake libfftw3-dev libmbedtls-dev libboost-program-options-dev libconfig++-dev libsctp-dev libtool autoconf libzmq3-dev
